@@ -4,19 +4,19 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require('path')
 const connection = require('./config/database');
-const ErrorHandler = require('./middleware/ErrorHandler');
+const errorHandler = require('./middleware/errorHandler')
+const http = require('http');
+// const ErrorHandler = require('./middleware/ErrorHandler');
 
 //Router Imports
-const userRoutes = require('./routes/UserRoutes');
-const reviewRoutes = require('./routes/ReviewRoutes');
+const userRoutes = require("./routes/userRoutes")
+// const reviewRoutes = require('./routes/ReviewRoutes');
 
 
 try {
     const envFilePath = path.resolve(__dirname, 'config/.env');
-    // console.log("Here: ",envFilePath);
     dotenv.config({path: envFilePath});
     console.log(process.env.PORT);
-    // console.log(process.env.MONGO_URL);
 }
 catch(err) {
     console.log("Env Config Error:", err);
@@ -25,6 +25,7 @@ connection();
 
 
 const app = express();
+const server = http.createServer(app);
 
 app.use(express.json());
 app.use(cookieParser());
@@ -42,14 +43,14 @@ app.get('/', (req, res, next) => {
 });
 
 app.use('/api/v1', userRoutes);
-app.use('/api/v1', reviewRoutes);
+// app.use('/api/v1', reviewRoutes);
 
 
-app.use(ErrorHandler);
+app.use(errorHandler);
 
 // const 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is runnig on port ${PORT}`);
 });
 
