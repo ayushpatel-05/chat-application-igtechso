@@ -8,12 +8,20 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import "./index.css";
+import Login from "./Components/Login.jsx";
+import Register from "./Components/Register.jsx";
+import ProtectedRoute from "./Components/ProtectedRoute.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <SideBarWrapper></SideBarWrapper>,
-    // element: <ChatArea></ChatArea>,
+    element: (
+      <ProtectedRoute>
+        <SideBarWrapper></SideBarWrapper>
+      </ProtectedRoute>
+    ),
+    // element:<Login></Login>
+    // element: <Register></Register>
     children: [
       {
         path: "",
@@ -21,6 +29,14 @@ const router = createBrowserRouter([
       }
     ]
   },
+  {
+    path: "/login",
+    element: <Login></Login>
+  },
+  {
+    path: "/register",
+    element: <Register></Register>
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
