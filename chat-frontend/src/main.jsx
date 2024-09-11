@@ -11,6 +11,8 @@ import "./index.css";
 import Login from "./Components/Login.jsx";
 import Register from "./Components/Register.jsx";
 import ProtectedRoute from "./Components/ProtectedRoute.jsx";
+import { Provider } from "react-redux";
+import { store } from "./store.js";
 
 const router = createBrowserRouter([
   {
@@ -23,7 +25,12 @@ const router = createBrowserRouter([
     // element:<Login></Login>
     // element: <Register></Register>
     children: [
+      // {
+      //   path: "",
+      //   element: <h1 className="flex justify-center">Select a chat</h1>
+      // },
       {
+        // path: "/chat/:conversationId",
         path: "",
         element: <ChatArea></ChatArea>
       }
@@ -41,6 +48,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </React.StrictMode>
 );

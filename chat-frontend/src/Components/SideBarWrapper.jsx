@@ -13,7 +13,12 @@ export default function SideBarWrapper() {
     //   socketRef.current = io("http://localhost:3000");
     //   console.log("Reaching here");
     // }
-    const newSocket = io("http://localhost:3000");
+    const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
+    const newSocket = io("http://localhost:3000", {
+      auth: {
+        token
+      }
+    });
     setSocket(newSocket);
 
     return () => {
