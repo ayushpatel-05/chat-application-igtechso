@@ -1,9 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ChatBubble from "./ChatBubble";
 import SendMessage from "./SendMessage";
+import { useOutletContext } from "react-router-dom";
 
 export default function ChatArea({messages}) {
     const [messageList, setMessageList] = useState(data);//Later to be changed 
+    const [socket] = useOutletContext();
+    console.log("The socket is: ",socket)
+
+    useEffect(() => {
+        if (!socket) return;
+    
+        // Listen for incoming messages
+        socket.on("receiveMessage", (newMessage) => {
+            setMessageList(oldState => [
+                ...oldState, // shallow copy of the array
+                {
+                    message: newMessage,
+                    user: true, // Assuming this is a user message
+                }
+            ]);
+        });
+    
+        // Clean up listener
+        return () => socket.off("receiveMessage");
+      }, [socket]);
+
 
     function handelMessageSend(newMessage) {
         setMessageList(oldState => [
@@ -13,6 +35,8 @@ export default function ChatArea({messages}) {
                 user: true, // Assuming this is a user message
             }
         ]);
+        console.log("Here");
+        socket.emit("message", newMessage);
     }
 
     return (

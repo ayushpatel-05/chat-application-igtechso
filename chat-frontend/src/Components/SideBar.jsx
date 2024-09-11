@@ -1,6 +1,6 @@
 import ChatListItem from "./ChatListItem";
 
-export default function SideBar() {
+export default function SideBar({socket}) {
   return (
     <nav
       className="bg-[#211636] shadow-lg h-screen top-0 left-0 min-w-[270px] py-6 px-4 font-[sans-serif] flex flex-col overflow-auto no-scrollbar">
