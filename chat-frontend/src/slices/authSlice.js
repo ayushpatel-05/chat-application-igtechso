@@ -12,6 +12,16 @@ const checkAuthentication = () => {
 };
 
 
+const getUserData = () => {
+  console.log("Fetching user data from local storage")
+  if(checkAuthentication) {
+    const userData = JSON.parse(localStorage.getItem('User'));
+    return userData;
+  }
+  else
+    return null;
+}
+
 
 
 // Async thunk to handle register
@@ -49,7 +59,8 @@ export const login = createAsyncThunk(
           // credentials: 'include'
         }
       );
-      console.log("Sending the request");
+      // console.log("Sending the request");
+      localStorage.setItem("User", JSON.stringify(response.data));
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -68,6 +79,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     ...initialState,
+    user: getUserData(),
     isAuthenticated: checkAuthentication(),
   },
   reducers: {
@@ -76,6 +88,7 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.loading = false;
       state.error = null;
+      //Also delete local storage
     },
   },
   extraReducers: (builder) => {

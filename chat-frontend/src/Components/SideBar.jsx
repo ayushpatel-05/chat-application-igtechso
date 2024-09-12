@@ -1,8 +1,39 @@
 import ChatListItem from "./ChatListItem";
 import { useSelector } from "react-redux";
+import NewChat from "./NewChat";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { createChat } from "../slices/chatSlice";
+import { selectPerson } from "../slices/chatSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function SideBar({socket}) {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const peopleList = useSelector((state) => state.chat.people);
+  const error = useSelector((state) => state.chat.error);
+  const selectedConversationID = useSelector((state) => state.chat.selectedConversationID);
+  const [newUserID, setNewUserID] = useState("");
+
+  console.log(peopleList);
+  console.log(selectedConversationID);
+
+  const handelChatSelect = (id) => {
+    dispatch(selectPerson(id))
+    navigate(`/${id}`);
+  }
+
+
+  const handleInputChange = (event) => {
+    setNewUserID(event.target.value);
+  };
+
+  const handleButtonClick = () => {
+    console.log("User ID submitted:", newUserID);
+    dispatch(createChat(newUserID));
+    setNewUserID("");
+  };
 
   return (
     <nav
@@ -22,6 +53,10 @@ export default function SideBar({socket}) {
 
       <hr className="border-gray-500 mt-8" />
 
+        {/* <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full outline-none">
+          New Chat
+        </button> */}
+        <NewChat {...{handleInputChange, handleButtonClick, message: newUserID, error} }></NewChat>
       <div className="my-8 flex-1">
         <h6 className="text-sm text-white inline-block">Chats</h6>
         <svg xmlns="http://www.w3.org/2000/svg" fill="#fff" className="w-[15px] h-[15px] float-right cursor-pointer ml-auto"
@@ -35,9 +70,11 @@ export default function SideBar({socket}) {
          {peopleList.map((item, index) => {
             return (
                 <ChatListItem name={item.name}
+                id={item._id}
                 unread={item.unread}
                 key={index}
-                url={item.imageUrl}></ChatListItem>
+                url={item.imageUrl}
+                handelChatSelect={handelChatSelect}></ChatListItem>
             )
          })}
         </ul>

@@ -61,54 +61,15 @@ io.use((socket, next) => {
   }
 });
 
-//Imporvements needed:
-//Should use socket.to.emit instead
-// io.on("connection", (socket) => {
-//   console.log(`New client connected: ${socket.id}`);
-//   console.log(socket.user);
-
-//   // Handle incoming messages
-//   socket.on("message", async ({message, conversationId}) => {
-//     // Log message or handle it as needed
-//     console.log(`Message received: ${message}`);
-
-//     const messageDocument = new Message.create({content: message, conversationId, socket.user.id});
-//     await messageDocument.save(); 
-
-//     io.emit("receiveMessage", message);
-//   });
-
-//   socket.on("newChat", async ({message, recieverId}) => {
-//     const recieverDocument = await User.findById(recieverId).exec();
-//     // const senderDocument = await User.findById(socket.user.id).exec();
-//     if(!recieverDocument) {
-//         // socket.to(socket.id).emit("error")
-//         socket.emit("error", "No such user exists");
-//     }
-
-//     const conversationDocument = new Conversation({participants: [recieverDocument._id, socket.user.id]});
-//     await conversationDocument.save();
-//     socket.emit("newConversation", conversationDocument._id);
-//     io.emit("receiveMessage", {conversationDocument._id , message});
-//   });
-
-
-//   // Handle disconnection
-//   socket.on("disconnect", () => {
-//     console.log(`Client disconnected: ${socket.id}`);
-//   });
-// });
 
 
 io.on("connection", async (socket) => {
-    console.log("Here");
     console.log(`New client connected: ${socket.id}`);
-    console.log(socket.user);
     userToSocketMap[socket.user.id] = socket.id;
     const conversations = await Conversation.find({ participants: socket.user.id }).exec();
-
     conversations.map((conversation) => {
-      socket.join(conversation._id);
+      console.log("Joining conversation room: ",conversation._id.toString());
+      socket.join(conversation._id.toString());
     });
 
   
@@ -123,12 +84,7 @@ io.on("connection", async (socket) => {
           senderId: socket.user.id
         });
         await messageDocument.save();
-  
-        // Emit the message to all clients in the room for this conversation
-        io.to(conversationId).emit("receiveMessage", {
-          conversationId,
-          message: messageDocument.content
-        });
+        io.to(conversationId).emit("receiveMessage", messageDocument);
       } catch (error) {
         console.error("Error sending message:", error);
         socket.emit("error", "Failed to send message");
@@ -166,6 +122,11 @@ io.on("connection", async (socket) => {
         socket.emit("error", "Failed to start new chat");
       }
     });
+
+
+    socket.on("disconnect", () => {
+      console.log(`${socket.id} is disconnecting`);
+    })
   });
   
 

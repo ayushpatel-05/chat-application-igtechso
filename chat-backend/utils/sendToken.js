@@ -11,13 +11,11 @@ const sendToken = async (user, statusCode, res) => {
     if(userInfo.password) {
         delete userInfo.password;
     }
+    userInfo.id = userInfo._id;
     // delete userInfo._id;
     delete userInfo.__v;
-
-    res.status(statusCode).cookie('token', token, cookieOptions).json({
-        success: true,
-        userInfo
-    });
+    delete userInfo._id;
+    res.status(statusCode).cookie('token', token, cookieOptions).json(userInfo);
 }
 
 module.exports = sendToken;

@@ -3,6 +3,7 @@ const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
 const catchAsyncError = require('../middleware/catchAsyncError');
 const ErrorMessage = require('../utils/errorMessage');
+const mongoose = require('mongoose');
 // const sendToken = require("../utils/sendToken");
 
 exports.getUserChatsList = catchAsyncError(async function registerUser(req, res, next) {
@@ -12,28 +13,38 @@ exports.getUserChatsList = catchAsyncError(async function registerUser(req, res,
 });
 
 
-exports.getChatHistory = catchAsyncError(async(req, res, next) => {
-    const { email, password} = req.body;
-
-    if(!email || !password) {
-        return next(new ErrorMessage('Please enter email and password', 400));
+exports.getChatHistory = catchAsyncError(async (req, res, next) => {
+    const { conversationID } = req.params;
+    
+    if (!conversationID) {
+        return res.status(400).json({
+            success: false,
+            message: "Conversation ID is required"
+        });
     }
-
-    const user = await User.findOne({email}).select("+password");
-    if(!user) {
-        return next(new ErrorMessage("Invalid Email or Password", 401));
-    }
-
-    const isPasswordCorrect = user.comparePassword(password);
-
-    if(!isPasswordCorrect) {
-        return next(new ErrorHandler("Invalid email or password", 401));
-    }
-    await sendToken(user, 200, res);
+    const messages = await Message.find({ conversationId:conversationID }).select('-_id -__v -conversationId').exec();
+    // const result = messages.map(message => ({
+    //     content: message.content,
+    //     // name: message.senderId ? message.senderId.name : undefined
+    //     id: 
+    //   }));
+    return res.status(200).json(messages);
 });
 
 
-// exports.logoutUser = catchAsyncError(async(req, res, next) => {
-//     res.clearCookie('token');
-//     res.status(200).send("Logout Successful");
-// })
+exports.initiateNewChat = catchAsyncError(async(req, res, next) => {
+    const userID = req.params.userID;
+    if(!mongoose.Types.ObjectId.isValid(userID)) {
+        next(new ErrorMessage("Invalid User ID", 422));
+    }
+
+    const userDocument = await User.exists({_id: userID});
+    if(!userDocument) {
+        next(new ErrorMessage("User does not exists", 404));
+    }
+
+    const newConversation = new Conversation({participants: [userID, req.user._id]});
+    await newConversation.save();
+    res.status(200).send({message: "New Conversation Created",conversationID: newConversation._id});
+});
+

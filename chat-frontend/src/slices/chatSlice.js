@@ -1,6 +1,30 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
+
+
+
+
+// Async thunk to createChat
+export const createChat = createAsyncThunk(
+  'chat/createChat',
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`http://localhost:3000/api/v1/chats/create/${userId}`);
+      return response.data; // Return the created chat details
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        return rejectWithValue('User not found');
+      }
+      return rejectWithValue(error.response.data || 'Failed to create chat');
+    }
+  }
+);
+
+
+
+
+
 // Async thunk to fetch the list of people
 export const fetchPeople = createAsyncThunk(
   'chat/fetchPeople',
@@ -21,6 +45,7 @@ export const fetchChatHistory = createAsyncThunk(
   async (personId, { rejectWithValue }) => {
     try {
       const response = await axios.get(`http://localhost:3000/api/v1/chats/${personId}`);
+      console.log(response);
       return { chatHistory: response.data, personId };
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -33,18 +58,21 @@ const chatSlice = createSlice({
   initialState: {
     people: [],
     chatHistory: {},
-    selectedPersonId: null,
+    selectedConversationID: null,
     loading: false,
     error: null,
   },
   reducers: {
     selectPerson: (state, action) => {
-      state.selectedPersonId = action.payload;
+      state.selectedConversationID = action.payload;
     },
-    clearChatHistory: (state) => {
-      state.chatHistory = [];
-      state.selectedPersonId = null;
+    clearChatHistory: (state) => {//Change Later for clear chats to be person specific
+      state.chatHistory = {};
+      state.selectedConversationID = null;
     },
+    pushNewMessage: (state, action) => {
+      state.chatHistory[action.payload.conversationID].push(action.payload.message);
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -73,10 +101,24 @@ const chatSlice = createSlice({
       .addCase(fetchChatHistory.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Failed to fetch chat history';
+      })
+      .addCase(createChat.pending, (state) => {
+        state.loading = true,
+        state.error = false
+      })
+      .addCase(createChat.fulfilled, (state, action) => {
+        state.loading = false;
+        state.people.push(action.payload);
+        state.selectedConversationID = action.payload.conversationID;
+        state.chatHistory[action.payload.conversationID] = [];
+      })
+      .addCase(createChat.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to create new chat';
       });
   },
 });
 
-export const { selectPerson, clearChatHistory } = chatSlice.actions;
+export const { selectPerson, clearChatHistory, pushNewMessage } = chatSlice.actions;
 
 export default chatSlice.reducer;

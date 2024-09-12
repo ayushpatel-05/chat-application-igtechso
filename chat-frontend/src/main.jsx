@@ -25,13 +25,12 @@ const router = createBrowserRouter([
     // element:<Login></Login>
     // element: <Register></Register>
     children: [
-      // {
-      //   path: "",
-      //   element: <h1 className="flex justify-center">Select a chat</h1>
-      // },
       {
-        // path: "/chat/:conversationId",
         path: "",
+        element: <h1 className="h-screen grow flex justify-center align-middle">Select a chat to start conversation</h1>
+      },
+      {
+        path: "/:chatID",
         element: <ChatArea></ChatArea>
       }
     ]
