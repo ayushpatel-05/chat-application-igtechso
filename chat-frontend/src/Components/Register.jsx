@@ -1,8 +1,36 @@
 import Input from "./Input";
 import Checkbox from "./Checkbox";
+import { useDispatch } from "react-redux";
+import { register } from "../slices/authSlice";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 // Main Login Component
 export default function Register() {
+  
+  const [formData, setFormData] = useState({ email: "", password: "", name: "" });
+
+  const dispatch = useDispatch();
+
+
+  function handelChange(e) {
+      // console.log(e);
+      console.log(e.target.name);
+      console.log(e.target.value);
+      if (e.target.type == "checkbox") return;
+      setFormData((oldState) => ({
+        ...oldState,
+        [e.target.name]: e.target.value,
+      }));
+  }
+
+  function handelSubmit(e) {
+    e.preventDefault();
+
+    dispatch(register(formData));
+  }
+
+
   return (
     <div className="flex justify-center">
       <section className="bg-gray-50 dark:bg-gray-900 w-screen">
@@ -23,18 +51,27 @@ export default function Register() {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Create an account
               </h1>
-              <form className="space-y-4 md:space-y-6" action="#">
+              <form className="space-y-4 md:space-y-6" action="#" onSubmit={handelSubmit}>
+              <Input
+                  label="Your name"
+                  type="text"
+                  name="name"
+                  placeholder="John Doe"
+                  handelChange={handelChange}
+                />
                 <Input
                   label="Your email"
                   type="email"
                   name="email"
                   placeholder="name@company.com"
+                  handelChange={handelChange}
                 />
                 <Input
                   label="Password"
                   type="password"
                   name="password"
                   placeholder="••••••••"
+                  handelChange={handelChange}
                 />
                 <Input
                   label="Confirm password"
@@ -51,12 +88,9 @@ export default function Register() {
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   Already have an account?{" "}
-                  <a
-                    href="#"
-                    className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                  >
+                  <Link className="font-medium text-primary-600 hover:underline dark:text-primary-500" to="/login">
                     Login here
-                  </a>
+                  </Link>
                 </p>
               </form>
             </div>

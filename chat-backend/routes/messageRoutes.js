@@ -1,7 +1,7 @@
 const express = require("express");
 // const { registerUser, loginUser, logoutUser } = require('../controllers/UserController');
 const { isAuthenticatedUser } = require("../middleware/authMiddleware");
-
+const { getUserChatsList, getChatHistory } = require('../controllers/MessageController');
 
 
 const router = express.Router();

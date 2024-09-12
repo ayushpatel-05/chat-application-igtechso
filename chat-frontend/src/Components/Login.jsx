@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { login } from "../slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 // Main Login Component
 export default function Login() {
@@ -88,12 +89,15 @@ export default function Login() {
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   Dont have an account?{" "}
-                  <a
+                  {/* <a
                     href="#"
                     className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >
                     Signup here
-                  </a>
+                  </a> */}
+                  <Link className="font-medium text-primary-600 hover:underline dark:text-primary-500" to="/register">
+                    Signup here
+                  </Link>
                 </p>
               </form>
             </div>

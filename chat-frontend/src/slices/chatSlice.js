@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-
+axios.defaults.withCredentials = true;
 // Async thunk to fetch the list of people
 export const fetchPeople = createAsyncThunk(
   'chat/fetchPeople',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('http://localhost:3000/api/v1/people');
+      const response = await axios.get('http://localhost:3000/api/v1/chats');
+      console.log("The people list is: ", response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -20,7 +21,7 @@ export const fetchChatHistory = createAsyncThunk(
   async (personId, { rejectWithValue }) => {
     try {
       const response = await axios.get(`http://localhost:3000/api/v1/chats/${personId}`);
-      return response.data;
+      return { chatHistory: response.data, personId };
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -31,7 +32,7 @@ const chatSlice = createSlice({
   name: 'chat',
   initialState: {
     people: [],
-    chatHistory: [],
+    chatHistory: {},
     selectedPersonId: null,
     loading: false,
     error: null,
@@ -64,7 +65,9 @@ const chatSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchChatHistory.fulfilled, (state, action) => {
-        state.chatHistory = action.payload;
+        const { chatHistory, personId } = action.payload;
+        state.chatHistory[personId] = chatHistory;
+        state.currentPersonId = personId;
         state.loading = false;
       })
       .addCase(fetchChatHistory.rejected, (state, action) => {

@@ -7,9 +7,14 @@ const messageSchema = new mongoose.Schema({
     content: {
         type: String,
         required: [true, "No message provided"],
-        validate: [!validator.isEmpty, "Message cannot be empty"],
-        maxLength: 500
-    },
+        validate: {
+          validator: function(value) {
+            return !validator.isEmpty(value);
+          },
+          message: "Message cannot be empty"
+        },
+        maxLength: [500, "Message cannot exceed 500 characters"]
+      },
     conversationId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Conversation'

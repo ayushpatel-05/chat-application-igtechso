@@ -1,6 +1,9 @@
 import ChatListItem from "./ChatListItem";
+import { useSelector } from "react-redux";
 
 export default function SideBar({socket}) {
+  const peopleList = useSelector((state) => state.chat.people);
+
   return (
     <nav
       className="bg-[#211636] shadow-lg h-screen top-0 left-0 min-w-[270px] py-6 px-4 font-[sans-serif] flex flex-col overflow-auto no-scrollbar">
@@ -29,7 +32,7 @@ export default function SideBar({socket}) {
         </svg>
 
         <ul className="mt-6 space-y-6">
-         {data.map((item, index) => {
+         {peopleList.map((item, index) => {
             return (
                 <ChatListItem name={item.name}
                 unread={item.unread}
@@ -46,40 +49,40 @@ export default function SideBar({socket}) {
 
 
 
-const data = [
-    {
-        name: "Peter Taylor",
-        imageUrl: "https://readymadeui.com/profile_2.webp",
-        unread: true
-    },
-    {
-        name: "Johne Words",
-        imageUrl: "https://readymadeui.com/profile_4.webp",
-        unread: false
-    },
-    {
-        name: "Alen Walwa",
-        imageUrl: "https://readymadeui.com/profile_3.webp",
-        unread: false
-    },
-    {
-        name: "User",
-        imageUrl: "https://readymadeui.com/profile.webp",
-        unread: true
-    },
-    {
-        name: "User",
-        imageUrl: "https://readymadeui.com/team-1.webp",
-        unread: false
-    },
-    {
-        name: "User",
-        imageUrl: "https://readymadeui.com/team-2.webp",
-        unread: false
-    },
-    {
-        name: "User",
-        imageUrl: "https://readymadeui.com/team-3.webp",
-        unread: false
-    }
-]
+// const data = [
+//     {
+//         name: "Peter Taylor",
+//         imageUrl: "https://readymadeui.com/profile_2.webp",
+//         unread: true
+//     },
+//     {
+//         name: "Johne Words",
+//         imageUrl: "https://readymadeui.com/profile_4.webp",
+//         unread: false
+//     },
+//     {
+//         name: "Alen Walwa",
+//         imageUrl: "https://readymadeui.com/profile_3.webp",
+//         unread: false
+//     },
+//     {
+//         name: "User",
+//         imageUrl: "https://readymadeui.com/profile.webp",
+//         unread: true
+//     },
+//     {
+//         name: "User",
+//         imageUrl: "https://readymadeui.com/team-1.webp",
+//         unread: false
+//     },
+//     {
+//         name: "User",
+//         imageUrl: "https://readymadeui.com/team-2.webp",
+//         unread: false
+//     },
+//     {
+//         name: "User",
+//         imageUrl: "https://readymadeui.com/team-3.webp",
+//         unread: false
+//     }
+// ]

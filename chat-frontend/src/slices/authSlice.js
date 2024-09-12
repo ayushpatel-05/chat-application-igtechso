@@ -13,6 +13,27 @@ const checkAuthentication = () => {
 
 
 
+
+// Async thunk to handle register
+export const register = createAsyncThunk(
+  "auth/register",
+  async (userData, { rejectWithValue }) => {
+    try {
+      axios.defaults.withCredentials = true;
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/register", // Assuming this is your registration endpoint
+        userData
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+
+
+
 // Async thunk to handle login
 export const login = createAsyncThunk(
   "auth/login",
@@ -47,7 +68,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     ...initialState,
-    isAuthenticated: checkAuthentication()
+    isAuthenticated: checkAuthentication(),
   },
   reducers: {
     logout: (state) => {
@@ -64,7 +85,6 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
-        console.log("Reaching here");
         state.user = action.payload;
         state.isAuthenticated = true;
         state.loading = false;
@@ -72,9 +92,25 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Login failed";
+      })
+      // Handling register cases
+      .addCase(register.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(register.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isAuthenticated = true;
+        state.loading = false;
+      })
+      .addCase(register.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Registration failed";
       });
   },
 });
+
+
 
 export const { logout } = authSlice.actions;
 
