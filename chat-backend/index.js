@@ -90,6 +90,16 @@ io.on("connection", async (socket) => {
         socket.emit("error", "Failed to send message");
       }
     });
+
+
+    socket.on("callUser", ({signalData, conversationId}) => {
+      socket.to(conversationId).emit("callUser", signalData);
+    })
+
+    socket.on("answerCall", ({conversationId, signal}) => {
+      socket.to(conversationId).emit("callAccepted", signal);
+    })
+
   
     // Handle starting a new chat
     socket.on("newChat", async ({ message, recieverId }) => {

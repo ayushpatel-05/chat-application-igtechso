@@ -13,6 +13,7 @@ import Register from "./Components/Register.jsx";
 import ProtectedRoute from "./Components/ProtectedRoute.jsx";
 import { Provider } from "react-redux";
 import { store } from "./store.js";
+import VideoPage from "./Components/VideoPage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
       {
         path: "/:chatID",
         element: <ChatArea></ChatArea>
+      },
+      {
+        path: "/:chatID/video",
+        element: <VideoPage></VideoPage>
       }
     ]
   },
