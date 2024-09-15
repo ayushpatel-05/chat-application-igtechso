@@ -92,13 +92,31 @@ io.on("connection", async (socket) => {
     });
 
 
-    socket.on("callUser", ({signalData, conversationId}) => {
-      socket.to(conversationId).emit("callUser", signalData);
-    })
+    // socket.on("callUser", ({signalData, conversationId}) => {
+    //   io.to(conversationId).emit("callUser", signalData);
+    // })
 
-    socket.on("answerCall", ({conversationId, signal}) => {
-      socket.to(conversationId).emit("callAccepted", signal);
-    })
+    // socket.on("answerCall", ({conversationId, signal}) => {
+    //   io.to(conversationId).emit("callAccepted", signal);
+    // })
+    socket.on("offer", async ({sdp, conversationId}) => {
+      // const conversation = await Conversation.findById(conversationId).exec();
+      // // const userId = userToSocketMap[socket.user.id] = 
+      // const otherParticipants = conversation.participants.map((person) => {
+      //   if(socket.user.id != person)return person;
+      // })
+      console.log("Offer Recieved in backend", conversationId);
+      // otherParticipants.forEach((person) => io.to(userToSocketMap[person]))
+      io.to(conversationId).emit("offer", {sdp, senderId: socket.user.id});
+    });
+    socket.on("answer", async ({sdp, conversationId}) => {
+      // const conversations = await Conversation.find({ participants: socket.user.id }).exec();
+      io.to(conversationId).emit("answer", {sdp, senderId: socket.user.id});
+    });
+    socket.on("candidate", async ({candidate, conversationId}) => {
+      // const conversations = await Conversation.find({ participants: socket.user.id }).exec();
+      io.to(conversationId).emit("candidate", {candidate, senderId: socket.user.id});
+    });
 
   
     // Handle starting a new chat

@@ -7,8 +7,12 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { pushNewMessage } from "../slices/chatSlice";
+import { LuVideo } from "react-icons/lu";
+import { MdOutlineCall } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 export default function ChatArea() {
+    const navigate = useNavigate();
     const {chatID} = useParams();
     const dispatch = useDispatch();
     let chatHistory = useSelector((state) => state.chat.chatHistory[chatID]);
@@ -32,7 +36,10 @@ export default function ChatArea() {
         dispatch(fetchChatHistory(chatID));
       }, [])
 
-
+    function handelVideoCall() {
+        navigate(`/${chatID}/video`)
+    }
+    
     function handelMessageSend(newMessage) {
         socket.emit("message", {message: newMessage, conversationId: chatID});
     }
@@ -45,6 +52,12 @@ export default function ChatArea() {
                         <div className="flex items-center mb-2">
                             <img className="w-8 h-8 rounded-full mr-2" src="https://picsum.photos/50/50" alt="User Avatar" />
                             <div className="font-medium">{user.name}</div>
+                            <button className="m-5" onClick={handelVideoCall}>
+                                <LuVideo></LuVideo>
+                            </button>
+                            <button className="" onClick={handelVideoCall}>
+                                <MdOutlineCall></MdOutlineCall>
+                            </button>
                         </div>
 
                         {chatHistory.map((item, index) => {
