@@ -52,15 +52,25 @@ export const login = createAsyncThunk(
       axios.defaults.withCredentials = true;
       const response = await axios.post(
         "http://localhost:3000/api/v1/login",
-        userData,
-        {
-          // withCredntials: true,
-          // credentials: 'include'
-          // credentials: 'include'
-        }
+        userData
       );
-      // console.log("Sending the request");
       localStorage.setItem("User", JSON.stringify(response.data));
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+
+export const logout = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      axios.defaults.withCredentials = true;
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/logout"
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -83,13 +93,13 @@ const authSlice = createSlice({
     isAuthenticated: checkAuthentication(),
   },
   reducers: {
-    logout: (state) => {
-      state.user = null;
-      state.isAuthenticated = false;
-      state.loading = false;
-      state.error = null;
-      //Also delete local storage
-    },
+    // logout: (state) => {
+    //   state.user = null;
+    //   state.isAuthenticated = false;
+    //   state.loading = false;
+    //   state.error = null;
+    //   //Also delete local storage
+    // },
   },
   extraReducers: (builder) => {
     builder
@@ -119,12 +129,25 @@ const authSlice = createSlice({
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Registration failed";
+      })
+      .addCase(logout.pending, (state) => {
+        state.loading = true,
+        state.error = null;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.isAuthenticated = false;
+        state.user = null;
+        state.loading = false;
+      })
+      .addCase(logout.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Logout failed";
       });
   },
 });
 
 
 
-export const { logout } = authSlice.actions;
+// export const { logout } = authSlice.actions;
 
 export default authSlice.reducer;
