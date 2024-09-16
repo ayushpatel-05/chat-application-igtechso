@@ -6,9 +6,10 @@ import { fetchChatHistory, deleteChat } from "../slices/chatSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { pushNewMessage } from "../slices/chatSlice";
+import { pushNewMessage, selectPerson } from "../slices/chatSlice";
 import { LuVideo } from "react-icons/lu";
 import { MdOutlineCall, MdDelete } from "react-icons/md";
+// import { selectPerson } from "../slices/chatSlice";
 // import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
@@ -35,6 +36,7 @@ export default function ChatArea() {
 
       useEffect(() => {
         dispatch(fetchChatHistory(chatID));
+        dispatch(selectPerson(chatID));
       }, [])
 
     function handelVideoCall() {
@@ -43,6 +45,7 @@ export default function ChatArea() {
     
     function handelMessageSend(newMessage) {
         socket.emit("message", {message: newMessage, conversationId: chatID});
+        dispatch(pushNewMessage({conversationID: chatID, message: newMessage}));
     }
 
     function handelMessageDelete() {

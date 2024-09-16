@@ -1,9 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 axios.defaults.withCredentials = true;
 
 
-
+// const getSelectedConversationId = () => {
+//   const {chatID} = useParams();
+//   console.log(chatID);
+//   return null;
+// }
 
 // Async thunk to createChat
 export const createChat = createAsyncThunk(
@@ -119,8 +124,8 @@ const chatSlice = createSlice({
       .addCase(createChat.fulfilled, (state, action) => {
         state.loading = false;
         state.people.push(action.payload);
-        state.selectedConversationID = action.payload.conversationID;
-        state.chatHistory[action.payload.conversationID] = [];
+        state.selectedConversationID = action.payload._id;
+        state.chatHistory[action.payload._id] = [];
       })
       .addCase(createChat.rejected, (state, action) => {
         state.loading = false;

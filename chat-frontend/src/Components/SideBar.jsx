@@ -1,7 +1,7 @@
 import ChatListItem from "./ChatListItem";
 import { useSelector } from "react-redux";
 import NewChat from "./NewChat";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { createChat } from "../slices/chatSlice";
 import { selectPerson } from "../slices/chatSlice";
@@ -12,6 +12,8 @@ export default function SideBar({ socket }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const userName = useSelector((state) => state.auth.user.name);
+  console.log(userName);
   const peopleList = useSelector((state) => state.chat.people);
   const error = useSelector((state) => state.chat.error);
   const selectedConversationID = useSelector(
@@ -19,9 +21,17 @@ export default function SideBar({ socket }) {
   );
   const [newUserID, setNewUserID] = useState("");
 
+
+  useEffect(() => {
+    if(selectedConversationID) {
+      navigate(`/${selectedConversationID}`);
+    }
+  }, [selectedConversationID])
+
+
   const handelChatSelect = (id) => {
     dispatch(selectPerson(id));
-    navigate(`/${id}`);
+    // navigate(`/${id}`);
   };
 
   const handleInputChange = (event) => {
@@ -35,6 +45,7 @@ export default function SideBar({ socket }) {
   const handelInitiateNewChat = () => {
     dispatch(createChat(newUserID));
     setNewUserID("");
+    // navigate(`/${selectedConversationID}`)
   };
 
   return (
@@ -51,7 +62,7 @@ export default function SideBar({ socket }) {
           </div>
           <div className="ml-4">
             <p className="text-xs text-gray-300">Hello</p>
-            <h6 className="text-base text-white">John Doe</h6>
+            <h6 className="text-base text-white">{userName}</h6>
           </div>
         </div>
 
