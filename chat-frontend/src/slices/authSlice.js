@@ -33,6 +33,7 @@ export const register = createAsyncThunk(
         "http://localhost:3000/api/v1/register", // Assuming this is your registration endpoint
         userData
       );
+      localStorage.setItem("User", JSON.stringify(response.data));
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -70,6 +71,7 @@ export const logout = createAsyncThunk(
       const response = await axios.post(
         "http://localhost:3000/api/v1/logout"
       );
+      localStorage.clear();
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

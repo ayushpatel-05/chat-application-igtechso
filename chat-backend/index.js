@@ -29,8 +29,8 @@ const io = socketIO(server, {
 });
 
 
-const userToSocketMap = {};
-const conversationId = {};
+// const userToSocketMap = {};
+// const conversationId = {};
 
 app.use(express.json());
 app.use(cookieParser());
@@ -64,23 +64,23 @@ io.use((socket, next) => {
 
 io.on("connection", async (socket) => {
     console.log(`New client connected: ${socket.id}`);
-    userToSocketMap[socket.user.id] = socket.id;
+    // userToSocketMap[socket.user.id] = socket.id;
     const conversations = await Conversation.find({ participants: socket.user.id }).exec();
     conversations.map((conversation) => {
       console.log("Joining conversation room: ",conversation._id.toString());
       socket.join(conversation._id.toString());
     });
 
-  
     // Handle incoming messages
-    socket.on("message", async ({ message, conversationId }) => {
+    socket.on("message", async ({ message, conversationId, senderId }) => {
       try {
         // Log and save the message
-        console.log(socket.user);
+        console.log(senderId);
         const messageDocument = new Message({
           content: message,
           conversationId,
-          senderId: socket.user.id
+          // senderId: socket.user.id
+          senderId: senderId
         });
         // console.log()
         await messageDocument.save();
@@ -104,36 +104,36 @@ io.on("connection", async (socket) => {
 
   
     // Handle starting a new chat
-    socket.on("newChat", async ({ message, recieverId }) => {
-      try {
-        const recieverDocument = await User.findById(recieverId).exec();
-        if (!recieverDocument) {
-          socket.emit("error", "No such user exists");
-          return;
-        }
+    // socket.on("newChat", async ({ message, recieverId }) => {
+    //   try {
+    //     const recieverDocument = await User.findById(recieverId).exec();
+    //     if (!recieverDocument) {
+    //       socket.emit("error", "No such user exists");
+    //       return;
+    //     }
   
-        // Create a new conversation and have both users join its room
-        const conversationDocument = new Conversation({
-          participants: [recieverDocument._id, socket.user.id]
-        });
-        await conversationDocument.save();
+    //     // Create a new conversation and have both users join its room
+    //     const conversationDocument = new Conversation({
+    //       participants: [recieverDocument._id, socket.user.id]
+    //     });
+    //     await conversationDocument.save();
   
-        // Have both users join the new conversation room
-        socket.join(conversationDocument._id);
-        // io.to(recieverDocument._id).emit("joinConversation", conversationDocument._id);
-        const recieverSocket = io.sockets.sockets.get(userToSocketMap[recieverId]);
-        recieverSocket.join(conversationDocument._id);
+    //     // Have both users join the new conversation room
+    //     socket.join(conversationDocument._id);
+    //     // io.to(recieverDocument._id).emit("joinConversation", conversationDocument._id);
+    //     const recieverSocket = io.sockets.sockets.get(userToSocketMap[recieverId]);
+    //     recieverSocket.join(conversationDocument._id);
 
-        // Emit the first message in the conversation
-        io.to(conversationDocument._id).emit("receiveFirstMessage", {
-          conversationId: conversationDocument._id,
-          message
-        });
-      } catch (error) {
-        console.error("Error starting new chat:", error);
-        socket.emit("error", "Failed to start new chat");
-      }
-    });
+    //     // Emit the first message in the conversation
+    //     io.to(conversationDocument._id).emit("receiveFirstMessage", {
+    //       conversationId: conversationDocument._id,
+    //       message
+    //     });
+    //   } catch (error) {
+    //     console.error("Error starting new chat:", error);
+    //     socket.emit("error", "Failed to start new chat");
+    //   }
+    // });
 
 
     socket.on("disconnect", () => {

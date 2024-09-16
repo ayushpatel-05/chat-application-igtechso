@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 axios.defaults.withCredentials = true;
 
 
@@ -86,6 +86,7 @@ const chatSlice = createSlice({
       state.selectedConversationID = null;
     },
     pushNewMessage: (state, action) => {
+      // console.log("Called: " );
       state.chatHistory[action.payload.conversationID].push(action.payload.message);
     }
   },

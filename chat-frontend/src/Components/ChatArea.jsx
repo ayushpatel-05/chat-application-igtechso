@@ -21,7 +21,7 @@ export default function ChatArea() {
     let chatHistory = useSelector((state) => state.chat.chatHistory[chatID]);
     const user = useSelector((state) => state.auth.user);
     if(!chatHistory)chatHistory = [];
-
+    console.log(chatHistory);
     const [socket] = useOutletContext();
 
     useEffect(() => {
@@ -44,8 +44,8 @@ export default function ChatArea() {
     }
     
     function handelMessageSend(newMessage) {
-        socket.emit("message", {message: newMessage, conversationId: chatID});
-        dispatch(pushNewMessage({conversationID: chatID, message: newMessage}));
+        socket.emit("message", {message: newMessage, conversationId: chatID, senderId: user.id});
+        // dispatch(pushNewMessage({conversationID: chatID, message: newMessage}));
     }
 
     function handelMessageDelete() {
