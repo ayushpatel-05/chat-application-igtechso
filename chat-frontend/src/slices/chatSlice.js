@@ -76,6 +76,7 @@ const chatSlice = createSlice({
     selectedConversationID: null,
     loading: false,
     error: null,
+    newChatId: null
   },
   reducers: {
     selectPerson: (state, action) => {
@@ -88,6 +89,9 @@ const chatSlice = createSlice({
     pushNewMessage: (state, action) => {
       // console.log("Called: " );
       state.chatHistory[action.payload.conversationID].push(action.payload.message);
+    },
+    createNewChat: (state, action) => {
+
     }
   },
   extraReducers: (builder) => {
@@ -126,6 +130,7 @@ const chatSlice = createSlice({
         state.loading = false;
         state.people.push(action.payload);
         state.selectedConversationID = action.payload._id;
+        state.newChatId = action.payload._id;
         state.chatHistory[action.payload._id] = [];
       })
       .addCase(createChat.rejected, (state, action) => {

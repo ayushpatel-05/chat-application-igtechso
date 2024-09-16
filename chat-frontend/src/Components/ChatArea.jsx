@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import ChatBubble from "./ChatBubble";
 import SendMessage from "./SendMessage";
 import { useOutletContext } from "react-router-dom";
-import { fetchChatHistory, deleteChat } from "../slices/chatSlice";
+import { fetchChatHistory, deleteChat, fetchPeople } from "../slices/chatSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -23,15 +23,24 @@ export default function ChatArea() {
     if(!chatHistory)chatHistory = [];
     console.log(chatHistory);
     const [socket] = useOutletContext();
+    // console.log("We have the socket: ", socket);
 
     useEffect(() => {
-        if (!socket) return;
-    
+        console.log("Inside the useEffect");
+        if (!socket) {
+            console.log("Socket not initialized");
+            return;
+        }
+        console.log("SSSSSSSSSSSSS");
         socket.on("receiveMessage", (newMessage) => {
+            console.log("Received a message");
             dispatch(pushNewMessage({conversationID: chatID, message: newMessage}));
         });
         
-        return () => socket.off("receiveMessage");
+        return () => {
+            console.log("Turned of the socket receiveMessage");
+            socket.off("receiveMessage");
+        }
       }, [socket, chatID, dispatch]);
 
       useEffect(() => {
@@ -44,6 +53,12 @@ export default function ChatArea() {
     }
     
     function handelMessageSend(newMessage) {
+        // console.log(socket);
+        // if(chatHistory.length == 0) {
+        //     socket.emit("newChatMessage", {message: newMessage, conversationId: chatID, senderId: user.id});
+        // }
+        // else
+        // dispatch(fetchPeople());
         socket.emit("message", {message: newMessage, conversationId: chatID, senderId: user.id});
         // dispatch(pushNewMessage({conversationID: chatID, message: newMessage}));
     }

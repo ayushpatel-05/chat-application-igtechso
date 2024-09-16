@@ -34,12 +34,13 @@ exports.getChatHistory = catchAsyncError(async (req, res, next) => {
 exports.initiateNewChat = catchAsyncError(async(req, res, next) => {
     const userID = req.params.userID;
     if(!mongoose.Types.ObjectId.isValid(userID)) {
-        next(new ErrorMessage("Invalid User ID", 422));
+        return next(new ErrorMessage("Invalid User ID", 422));
     }
 
     const userDocument = await User.exists({_id: userID});
+    console.log(userID);
     if(!userDocument) {
-        next(new ErrorMessage("User does not exists", 404));
+        return next(new ErrorMessage("User does not exists", 404));
     }
 
     const existingConversation = await Conversation.findOne({
