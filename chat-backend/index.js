@@ -76,11 +76,13 @@ io.on("connection", async (socket) => {
     socket.on("message", async ({ message, conversationId }) => {
       try {
         // Log and save the message
+        console.log(socket.user);
         const messageDocument = new Message({
           content: message,
           conversationId,
           senderId: socket.user.id
         });
+        // console.log()
         await messageDocument.save();
         io.to(conversationId).emit("receiveMessage", messageDocument);
       } catch (error) {

@@ -42,6 +42,14 @@ exports.initiateNewChat = catchAsyncError(async(req, res, next) => {
         next(new ErrorMessage("User does not exists", 404));
     }
 
+    const existingConversation = await Conversation.findOne({
+        participants: { $all: [userID, req.user._id] }
+    });
+
+    if (existingConversation) {
+        return next(new ErrorMessage("Conversation already exists", 409));
+    }
+
     const newConversation = new Conversation({participants: [userID, req.user._id]});
     await newConversation.save();
     res.status(200).send(newConversation);
