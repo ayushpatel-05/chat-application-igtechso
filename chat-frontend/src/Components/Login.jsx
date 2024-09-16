@@ -13,10 +13,7 @@ export default function Login() {
   const user = useSelector((state) => state.auth);
   const [formData, setFormdata] = useState({ email: "", password: "" });
 
-  console.log(user);
-
   function handelChange(e) {
-    // console.log(e);
     if (e.target.type == "checkbox") return;
     setFormdata((oldState) => ({
       ...oldState,
@@ -89,13 +86,10 @@ export default function Login() {
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   Dont have an account?{" "}
-                  {/* <a
-                    href="#"
+                  <Link
                     className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                    to="/register"
                   >
-                    Signup here
-                  </a> */}
-                  <Link className="font-medium text-primary-600 hover:underline dark:text-primary-500" to="/register">
                     Signup here
                   </Link>
                 </p>

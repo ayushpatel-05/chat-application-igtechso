@@ -33,7 +33,6 @@ export default function SideBar({ socket }) {
   }
 
   const handleButtonClick = () => {
-    console.log("User ID submitted:", newUserID);
     dispatch(createChat(newUserID));
     setNewUserID("");
   };
@@ -62,10 +61,6 @@ export default function SideBar({ socket }) {
       </div>
 
       <hr className="border-gray-500 mt-8" />
-
-      {/* <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full outline-none">
-          New Chat
-        </button> */}
       <NewChat
         {...{ handleInputChange, handleButtonClick, message: newUserID, error }}
       ></NewChat>
@@ -104,40 +99,4 @@ export default function SideBar({ socket }) {
   );
 }
 
-// const data = [
-//     {
-//         name: "Peter Taylor",
-//         imageUrl: "https://readymadeui.com/profile_2.webp",
-//         unread: true
-//     },
-//     {
-//         name: "Johne Words",
-//         imageUrl: "https://readymadeui.com/profile_4.webp",
-//         unread: false
-//     },
-//     {
-//         name: "Alen Walwa",
-//         imageUrl: "https://readymadeui.com/profile_3.webp",
-//         unread: false
-//     },
-//     {
-//         name: "User",
-//         imageUrl: "https://readymadeui.com/profile.webp",
-//         unread: true
-//     },
-//     {
-//         name: "User",
-//         imageUrl: "https://readymadeui.com/team-1.webp",
-//         unread: false
-//     },
-//     {
-//         name: "User",
-//         imageUrl: "https://readymadeui.com/team-2.webp",
-//         unread: false
-//     },
-//     {
-//         name: "User",
-//         imageUrl: "https://readymadeui.com/team-3.webp",
-//         unread: false
-//     }
-// ]
+

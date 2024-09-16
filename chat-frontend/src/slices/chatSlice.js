@@ -26,7 +26,6 @@ export const deleteChat = createAsyncThunk(
   'chat/deleteMessages',
   async ({messageList, conversationID}, { rejectWithValue }) => {
     try {
-      console.log(messageList, conversationID);
       await axios.delete(`http://localhost:3000/api/v1/chats/${conversationID}`, { data: {
         chatIDs: messageList
       } });
@@ -44,7 +43,6 @@ export const fetchPeople = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get('http://localhost:3000/api/v1/chats');
-      console.log("The people list is: ", response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -58,7 +56,6 @@ export const fetchChatHistory = createAsyncThunk(
   async (conversationID, { rejectWithValue }) => {
     try {
       const response = await axios.get(`http://localhost:3000/api/v1/chats/${conversationID}`);
-      console.log(response);
       return { chatHistory: response.data, conversationID };
     } catch (error) {
       return rejectWithValue(error.response.data);

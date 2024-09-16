@@ -10,7 +10,6 @@ const videoCallSlice = createSlice({
   initialState: initialState,
   reducers: {
     setLocalMediaStream(state, action) {
-        console.log("Setting media stream: ",action.payload);
       state.localMediaStream = action.payload;
     },
     setRemoteMediaStream(state, action) {
@@ -18,11 +17,7 @@ const videoCallSlice = createSlice({
     },
     clearMediaStreams(state) {
       // Stop all tracks of the local media stream
-      console.log("Here in media stream");
       if (state.localMediaStream) {
-        console.log("Here is localMediaStream");
-        console.log(state.localMediaStream);
-        console.log(state.localMediaStream.getTracks())
         state.localMediaStream.getTracks().forEach(track => track.stop());
         state.localMediaStream = null;
       }

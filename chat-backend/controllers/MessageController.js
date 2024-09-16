@@ -93,7 +93,6 @@ exports.deleteMultipleChats = catchAsyncError(async (req, res, next) => {
   
     // Find all messages by their IDs and verify the sender is the user
     const messages = await Message.find({ _id: { $in: chatIDs }, conversationId: conversationID });
-    console.log("Messages are",messages);
     if (!messages.length) {
       return res.status(404).json({
         success: false,

@@ -13,7 +13,6 @@ const checkAuthentication = () => {
 
 
 const getUserData = () => {
-  console.log("Fetching user data from local storage")
   if(checkAuthentication) {
     const userData = JSON.parse(localStorage.getItem('User'));
     return userData;

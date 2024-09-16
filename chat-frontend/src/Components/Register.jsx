@@ -2,21 +2,19 @@ import Input from "./Input";
 import Checkbox from "./Checkbox";
 import { useDispatch } from "react-redux";
 import { register } from "../slices/authSlice";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
 // Main Login Component
 export default function Register() {
-  
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "", name: "" });
 
   const dispatch = useDispatch();
 
 
   function handelChange(e) {
-      // console.log(e);
-      console.log(e.target.name);
-      console.log(e.target.value);
       if (e.target.type == "checkbox") return;
       setFormData((oldState) => ({
         ...oldState,
@@ -28,6 +26,7 @@ export default function Register() {
     e.preventDefault();
 
     dispatch(register(formData));
+    navigate('/')
   }
 
 

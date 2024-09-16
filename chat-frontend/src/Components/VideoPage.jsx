@@ -40,14 +40,8 @@ const VideoPage = () => {
     setPeerConnection(pc);
 
     function handleUnload() {
-      console.log("Handel Unload fired");
-      // if (localStream.current && localStream.current.srcObject) {
-      //   console.log("Cleaning localStream");
-      //   localStream.current.srcObject.getTracks().forEach((track) => track.stop());
-      // }
       dispatch(clearMediaStreams);
       peerConnection && peerConnection.close();
-      console.log("PeerClosed");
     }
 
     window.addEventListener("beforeunload", handleUnload);
@@ -85,18 +79,13 @@ const VideoPage = () => {
       };
     
       peerConnection.ontrack = (event) => {
-        // console.log("OnTrack running: ",event);
         const stream = event.streams[0];
-        // const remoteVideoElement = document.getElementById('remoteVideo');
-        // remoteStream.current.srcObject = stream;
         dispatch(setRemoteMediaStream(stream))
-        // remoteMediaStream = stream;
       }
     }
 
     socket.on("offer", async ({sdp, senderId}) => {
       if(senderId == userId)return;
-      // console.log("Offer recieved in frontend: ", senderId);
       localStream.current.srcObject.getTracks().forEach((track) => {
         peerConnection.addTrack(track, localStream.current.srcObject);
       });
@@ -104,17 +93,13 @@ const VideoPage = () => {
       await peerConnection.setRemoteDescription(offer);
       const answer = await peerConnection.createAnswer();
       await peerConnection.setLocalDescription(answer);
-      // socket.send(JSON.stringify({ type: 'answer', sdp: answer.sdp }));
       socket.emit('answer', {sdp:answer.sdp, conversationId});
     });
   
     socket.on("answer", async ({sdp, senderId}) => {
       if(senderId == userId)return;
-      // console.log("Answer recieved in frontend: ", senderId);
-      console.log(sdp);
       try {
         const answer = new RTCSessionDescription({ type: 'answer', sdp: sdp });
-        // console.log("Answer SDP Generate: ", answer.sdp);
         await peerConnection.setRemoteDescription(answer);
       }
       catch(err) {
@@ -124,7 +109,6 @@ const VideoPage = () => {
   
     socket.on("candidate", async ({candidate, senderId}) => {
       if(senderId == userId)return;
-      // console.log("Candidate recieved in frontend: ", senderId);
       const candidateObject = new RTCIceCandidate(candidate);
       await peerConnection.addIceCandidate(candidateObject);
     });
@@ -138,8 +122,6 @@ const VideoPage = () => {
           audio: true,
         });
         dispatch(setLocalMediaStream(stream));
-        // dispatch(clearMediaStreams());
-        // localStream.current.srcObject = stream;
       } catch (err) {
         setError("Failed to access media devices: " + err.message);
       }

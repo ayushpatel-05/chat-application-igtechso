@@ -47,7 +47,6 @@ app.use(
 
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
-  console.log("Here");
   if (token) {
     try {
       const user = jwt.verify(token, process.env.JWT_SECRET_KEY); // Verify the JWT
@@ -77,7 +76,6 @@ io.on("connection", async (socket) => {
     socket.on("message", async ({ message, conversationId }) => {
       try {
         // Log and save the message
-        console.log(`Message received in conversation ${conversationId}: ${message}`);
         const messageDocument = new Message({
           content: message,
           conversationId,
@@ -92,29 +90,13 @@ io.on("connection", async (socket) => {
     });
 
 
-    // socket.on("callUser", ({signalData, conversationId}) => {
-    //   io.to(conversationId).emit("callUser", signalData);
-    // })
-
-    // socket.on("answerCall", ({conversationId, signal}) => {
-    //   io.to(conversationId).emit("callAccepted", signal);
-    // })
     socket.on("offer", async ({sdp, conversationId}) => {
-      // const conversation = await Conversation.findById(conversationId).exec();
-      // // const userId = userToSocketMap[socket.user.id] = 
-      // const otherParticipants = conversation.participants.map((person) => {
-      //   if(socket.user.id != person)return person;
-      // })
-      console.log("Offer Recieved in backend", conversationId);
-      // otherParticipants.forEach((person) => io.to(userToSocketMap[person]))
       io.to(conversationId).emit("offer", {sdp, senderId: socket.user.id});
     });
     socket.on("answer", async ({sdp, conversationId}) => {
-      // const conversations = await Conversation.find({ participants: socket.user.id }).exec();
       io.to(conversationId).emit("answer", {sdp, senderId: socket.user.id});
     });
     socket.on("candidate", async ({candidate, conversationId}) => {
-      // const conversations = await Conversation.find({ participants: socket.user.id }).exec();
       io.to(conversationId).emit("candidate", {candidate, senderId: socket.user.id});
     });
 
@@ -166,7 +148,6 @@ app.get("/", (req, res, next) => {
 
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", messageRoutes);
-// app.use('/api/v1', reviewRoutes);
 
 app.use(errorHandler);
 
