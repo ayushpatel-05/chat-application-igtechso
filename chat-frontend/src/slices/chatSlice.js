@@ -22,7 +22,20 @@ export const createChat = createAsyncThunk(
 );
 
 
-
+export const deleteChat = createAsyncThunk(
+  'chat/deleteMessages',
+  async ({messageList, conversationID}, { rejectWithValue }) => {
+    try {
+      console.log(messageList, conversationID);
+      await axios.delete(`http://localhost:3000/api/v1/chats/${conversationID}`, { data: {
+        chatIDs: messageList
+      } });
+      return {messageList, conversationID}
+    } catch (error) {
+      return rejectWithValue(error.response?.data || 'Failed to delete messages');
+    }
+  }
+);
 
 
 // Async thunk to fetch the list of people
@@ -42,11 +55,11 @@ export const fetchPeople = createAsyncThunk(
 // Async thunk to fetch chat history with a specific person
 export const fetchChatHistory = createAsyncThunk(
   'chat/fetchChatHistory',
-  async (personId, { rejectWithValue }) => {
+  async (conversationID, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/v1/chats/${personId}`);
+      const response = await axios.get(`http://localhost:3000/api/v1/chats/${conversationID}`);
       console.log(response);
-      return { chatHistory: response.data, personId };
+      return { chatHistory: response.data, conversationID };
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -93,9 +106,9 @@ const chatSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchChatHistory.fulfilled, (state, action) => {
-        const { chatHistory, personId } = action.payload;
-        state.chatHistory[personId] = chatHistory;
-        state.currentPersonId = personId;
+        const { chatHistory, conversationID } = action.payload;
+        state.chatHistory[conversationID] = chatHistory;
+        state.currentPersonId = conversationID;
         state.loading = false;
       })
       .addCase(fetchChatHistory.rejected, (state, action) => {
@@ -115,7 +128,26 @@ const chatSlice = createSlice({
       .addCase(createChat.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Failed to create new chat';
-      });
+      })
+      .addCase(deleteChat.pending, (state) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(deleteChat.fulfilled, (state, action) => {
+        const { messageList, conversationID } = action.payload;
+
+        state.loading = false;
+
+        if (state.chatHistory[conversationID]) {
+          state.chatHistory[conversationID] = state.chatHistory[conversationID].filter(
+            (message) => !messageList.includes(message._id)
+          );
+        }
+      })
+      .addCase(deleteChat.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to delete new chat';
+      })
   },
 });
 

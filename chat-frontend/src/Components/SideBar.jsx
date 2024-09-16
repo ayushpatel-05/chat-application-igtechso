@@ -16,8 +16,6 @@ export default function SideBar({socket}) {
   const selectedConversationID = useSelector((state) => state.chat.selectedConversationID);
   const [newUserID, setNewUserID] = useState("");
 
-  console.log(peopleList);
-  console.log(selectedConversationID);
 
   const handelChatSelect = (id) => {
     dispatch(selectPerson(id))
@@ -68,12 +66,14 @@ export default function SideBar({socket}) {
 
         <ul className="mt-6 space-y-6">
          {peopleList.map((item, index) => {
+          const isSelected = selectedConversationID === item._id;
             return (
                 <ChatListItem name={item.name}
                 id={item._id}
                 unread={item.unread}
                 key={index}
                 url={item.imageUrl}
+                isSelected={isSelected}
                 handelChatSelect={handelChatSelect}></ChatListItem>
             )
          })}

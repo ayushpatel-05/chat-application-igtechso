@@ -1,24 +1,26 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ChatBubble from "./ChatBubble";
 import SendMessage from "./SendMessage";
 import { useOutletContext } from "react-router-dom";
-import { fetchChatHistory } from "../slices/chatSlice";
+import { fetchChatHistory, deleteChat } from "../slices/chatSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { pushNewMessage } from "../slices/chatSlice";
 import { LuVideo } from "react-icons/lu";
-import { MdOutlineCall } from "react-icons/md";
+import { MdOutlineCall, MdDelete } from "react-icons/md";
+// import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 export default function ChatArea() {
     const navigate = useNavigate();
     const {chatID} = useParams();
     const dispatch = useDispatch();
+    const [deleteList, setDeleteList] = useState([]);
     let chatHistory = useSelector((state) => state.chat.chatHistory[chatID]);
     const user = useSelector((state) => state.auth.user);
     if(!chatHistory)chatHistory = [];
-    console.log("Chat History is: ",chatHistory)
+
     const [socket] = useOutletContext();
 
     useEffect(() => {
@@ -32,7 +34,6 @@ export default function ChatArea() {
       }, [socket, chatID, dispatch]);
 
       useEffect(() => {
-        console.log("Running chat history fetch: ");
         dispatch(fetchChatHistory(chatID));
       }, [])
 
@@ -43,6 +44,22 @@ export default function ChatArea() {
     function handelMessageSend(newMessage) {
         socket.emit("message", {message: newMessage, conversationId: chatID});
     }
+
+    function handelMessageDelete() {
+        dispatch(deleteChat({messageList: deleteList,conversationID: chatID}))
+    }
+
+    function handelMessageSelect(id) {
+        setDeleteList((prevState) => {
+          const index = prevState.indexOf(id);
+      
+          if (index > -1) {
+            return prevState.filter((messageId) => messageId !== id);
+          } else {
+            return [...prevState, id];
+          }
+        });
+      }
 
     return (
         <>
@@ -58,13 +75,20 @@ export default function ChatArea() {
                             <button className="" onClick={handelVideoCall}>
                                 <MdOutlineCall></MdOutlineCall>
                             </button>
+                            {deleteList.length > 0 && 
+                            <button onClick={handelMessageDelete} className="m-4">
+                                <MdDelete></MdDelete>
+                            </button>}
                         </div>
 
                         {chatHistory.map((item, index) => {
                             return (
                                 <ChatBubble message={item.content}
+                                selectMessage={handelMessageSelect}
                                 ownerId={item.senderId}
-                                key={index}></ChatBubble>
+                                key={index}
+                                id={item._id}></ChatBubble>
+                                
                             )
                         })}
                     </div>
