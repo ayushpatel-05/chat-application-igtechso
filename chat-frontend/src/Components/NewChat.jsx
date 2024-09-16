@@ -1,4 +1,4 @@
-export default function NewChat({handleInputChange, handleButtonClick, message, error}) {
+export default function NewChat({handleInputChange, handelInitiateNewChat, message, error}) {
 
 
 
@@ -12,7 +12,7 @@ export default function NewChat({handleInputChange, handleButtonClick, message, 
                 placeholder="Enter ID"
 
             />
-            <button onClick={handleButtonClick} className="bg-green-500 hover:bg-green-700 text-white py-1 px-2 rounded-full outline-none">
+            <button onClick={handelInitiateNewChat} className="bg-green-500 hover:bg-green-700 text-white py-1 px-2 rounded-full outline-none">
                 New Chat
             </button>
         </div>

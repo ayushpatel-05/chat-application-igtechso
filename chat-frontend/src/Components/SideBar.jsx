@@ -32,7 +32,7 @@ export default function SideBar({ socket }) {
     dispatch(logout());
   }
 
-  const handleButtonClick = () => {
+  const handelInitiateNewChat = () => {
     dispatch(createChat(newUserID));
     setNewUserID("");
   };
@@ -62,7 +62,7 @@ export default function SideBar({ socket }) {
 
       <hr className="border-gray-500 mt-8" />
       <NewChat
-        {...{ handleInputChange, handleButtonClick, message: newUserID, error }}
+        {...{ handleInputChange, handelInitiateNewChat, message: newUserID, error }}
       ></NewChat>
       <div className="my-8 flex-1">
         <h6 className="text-sm text-white inline-block">Chats</h6>

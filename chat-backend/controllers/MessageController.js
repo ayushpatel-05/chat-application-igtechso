@@ -44,7 +44,7 @@ exports.initiateNewChat = catchAsyncError(async(req, res, next) => {
 
     const newConversation = new Conversation({participants: [userID, req.user._id]});
     await newConversation.save();
-    res.status(200).send({message: "New Conversation Created",conversationID: newConversation._id});
+    res.status(200).send(newConversation);
 });
 
 exports.deleteChat = catchAsyncError(async(req, res, next) => {
