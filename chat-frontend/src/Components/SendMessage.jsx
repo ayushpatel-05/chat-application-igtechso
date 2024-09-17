@@ -7,6 +7,13 @@ export default function SendMessage({sendMessage}) {
         setMessageText(event.target.value);
     }
 
+    const handleKeyDown = (event) => {
+      if (event.key === 'Enter') {
+          event.preventDefault(); // Prevents the default action (like form submission)
+          handelMessageSend();
+      }
+    };
+
     function handelMessageSend() {
         if(messageText.trim() == "")return;
         sendMessage(messageText);
@@ -22,6 +29,7 @@ export default function SendMessage({sendMessage}) {
           value={messageText}
           placeholder="Type your message..."
           onChange={handelChange}
+          onKeyDown={handleKeyDown}
         />
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-full" onClick={handelMessageSend}>
           Send

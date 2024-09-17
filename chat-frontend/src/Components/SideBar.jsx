@@ -49,8 +49,15 @@ export default function SideBar({ socket }) {
     // navigate(`/${selectedConversationID}`)
   };
 
+  const handleDeleteChat = () => {
+    console.log("Chat Deleted");
+  }
+  const handelArchiveChat = () => {
+    console.log("Chat Archived");
+  }
+
   return (
-    <nav className="bg-[#211636] shadow-lg h-screen top-0 left-0 min-w-[270px] py-6 px-4 font-[sans-serif] flex flex-col overflow-auto no-scrollbar">
+    <nav className="bg-[#211636] shadow-lg h-screen top-0 left-0 min-w-[300px] py-6 px-4 font-[sans-serif] flex flex-col overflow-auto no-scrollbar">
 
       <div className="flex items-center justify-between cursor-pointer p-4">
         <div className="flex items-center">
@@ -95,13 +102,15 @@ export default function SideBar({ socket }) {
             const isSelected = selectedConversationID === item._id;
             return (
               <ChatListItem
-                name={item.name}
+                name={item._id}
                 id={item._id}
                 unread={item.unread}
                 key={index}
                 url={item.imageUrl}
                 isSelected={isSelected}
                 handelChatSelect={handelChatSelect}
+                onArchiveChat={handelArchiveChat}
+                onDeleteChat={handleDeleteChat}
               ></ChatListItem>
             );
           })}

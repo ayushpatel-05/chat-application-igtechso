@@ -71,28 +71,6 @@ io.on("connection", async (socket) => {
       socket.join(conversation._id.toString());
     });
 
-    //Unfinished
-    // socket.on("newChatMessage", async ({ message, conversationId, senderId }) => {
-    //   try {
-    //     // Log and save the message
-    //     console.log("Message recieved in server: ", message, conversationId, senderId, socket.id);
-    //     console.log(senderId);
-    //     const messageDocument = new Message({
-    //       content: message,
-    //       conversationId,
-    //       // senderId: socket.user.id
-    //       senderId: senderId
-    //     });
-    //     // console.log()
-    //     await messageDocument.save();
-    //     console.log(io.sockets.adapter.rooms);
-    //     io.to(conversationId).emit("receiveMessage", messageDocument);
-    //   } catch (error) {
-    //     console.error("Error sending message:", error);
-    //     socket.emit("error", "Failed to send message");
-    //   }
-    // });
-
     // Handle incoming messages
     socket.on("message", async ({ message, conversationId, senderId }) => {
       try {
@@ -107,7 +85,6 @@ io.on("connection", async (socket) => {
         });
         // console.log()
         await messageDocument.save();
-        console.log(io.sockets.adapter.rooms);
         io.to(conversationId).emit("receiveMessage", messageDocument);
       } catch (error) {
         console.error("Error sending message:", error);

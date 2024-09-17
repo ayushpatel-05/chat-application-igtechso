@@ -15,6 +15,7 @@ export const createChat = createAsyncThunk(
   'chat/createChat',
   async (userId, { rejectWithValue }) => {
     try {
+      userId = encodeURIComponent(userId);
       const response = await axios.post(`http://localhost:3000/api/v1/chats/create/${userId}`);
       return response.data; // Return the created chat details
     } catch (error) {
@@ -27,7 +28,7 @@ export const createChat = createAsyncThunk(
 );
 
 
-export const deleteChat = createAsyncThunk(
+export const deleteMessage = createAsyncThunk(
   'chat/deleteMessages',
   async ({messageList, conversationID}, { rejectWithValue }) => {
     try {
@@ -137,11 +138,11 @@ const chatSlice = createSlice({
         state.loading = false;
         state.error = action.payload || 'Failed to create new chat';
       })
-      .addCase(deleteChat.pending, (state) => {
+      .addCase(deleteMessage.pending, (state) => {
         state.loading = true;
         state.error = false;
       })
-      .addCase(deleteChat.fulfilled, (state, action) => {
+      .addCase(deleteMessage.fulfilled, (state, action) => {
         const { messageList, conversationID } = action.payload;
 
         state.loading = false;
@@ -152,7 +153,7 @@ const chatSlice = createSlice({
           );
         }
       })
-      .addCase(deleteChat.rejected, (state, action) => {
+      .addCase(deleteMessage.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Failed to delete new chat';
       })
