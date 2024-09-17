@@ -90,9 +90,9 @@ const chatSlice = createSlice({
       // console.log("Called: " );
       state.chatHistory[action.payload.conversationID].push(action.payload.message);
     },
-    createNewChat: (state, action) => {
+    // createNewChat: (state, action) => {
 
-    }
+    // }
   },
   extraReducers: (builder) => {
     builder

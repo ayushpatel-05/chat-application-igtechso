@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 // import { useSelector } from "react-redux";
 import { useDispatch, useSelector } from "react-redux";
 import { clearMediaStreams, setLocalMediaStream, setRemoteMediaStream } from "../slices/videoCallSlice";
-// import 
 
 const pcConstraints = {
   optional: [{ DtlsSrtpKeyAgreement: true }],
@@ -25,6 +24,7 @@ const servers = {
 
 const VideoPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {localMediaStream, remoteMediaStream} = useSelector((state) => state.videoCall);
   const conversationId = useSelector((state) => state.chat.selectedConversationID);
   const userId = useSelector((state) => state.auth.user.id);
@@ -152,9 +152,12 @@ const VideoPage = () => {
   
   
   function handelStopVideoCall() {
+    console.log("Stop video call started");
     peerConnection.close();
     setCallStatus(false);
     dispatch(clearMediaStreams());
+    navigate('..', {relative: "path"});
+    console.log("Stop video call end");
   }
   
   
@@ -165,22 +168,22 @@ const VideoPage = () => {
   ) : (
     <>
       <div className="flex space-x-4">
-        <div className="w-1/2">
+        <div className="w-1/2 h-full">
           <video
             ref={localStream}
             autoPlay
             playsInline
-            controls
-            className="w-full h-auto rounded-lg shadow-lg"
+            // controls
+            className="w-full h-full h-auto rounded-lg shadow-lg"
           />
         </div>
-        <div className="w-1/2">
+        <div className="w-1/2 h-full">
           <video
             ref={remoteStream}
             autoPlay
             playsInline
-            controls
-            className="w-full h-auto rounded-lg shadow-lg"
+            // controls
+            className="w-full h-full rounded-lg shadow-lg bg-black"
           />
         </div>
       </div>

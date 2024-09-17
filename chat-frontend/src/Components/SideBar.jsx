@@ -30,6 +30,7 @@ export default function SideBar({ socket }) {
 
 
   const handelChatSelect = (id) => {
+    console.log("Chat with id clicked", id);
     dispatch(selectPerson(id));
     // navigate(`/${id}`);
   };
